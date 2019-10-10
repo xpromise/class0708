@@ -25,7 +25,7 @@ setImmediate(() => {
 
 setTimeout(() => {
   console.log('setTimeout() 111');
-}, 1000);
+}, 100);
 
 /*
   timers  定时器阶段  队列中只包含定时器到点回调函数
