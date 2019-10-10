@@ -21,4 +21,32 @@
     npm init 自定义初始化package.json
     npm init -y  初始化一个默认值package.json
 
+
+    npm配置淘宝镜像
+      npm config set registry https://registry.npm.taobao.org
+
+
+    安装yarn: npm i yarn -g
+
+     yarn add xxx 下载并添加生产依赖中
+     yarn add xxx --dev 下载并添加开发依赖中
+     yarn remove xxx
+     yarn global add xxx 全局安装一个包(不推荐使用，全局安装推荐npm：
+      npm全局下载的包的地址默认配置了环境变量，可以直接访问
+      yarn全局下载的包需要手动配置环境变量
+      )
+      yarn全局安装的路径 C:\Users\XiongJian\AppData\Local\Yarn\bin 需要将当前目录添加成环境变量
+
+     yarn配置淘宝镜像
+      yarn config set registry https://registry.npm.taobao.org
+
+    问题：npm和yarn不能混着用
+      如果先用yarn下载，在用npm。 npm会把yarn下载的包删除掉
+        解决： npm i / yarn 重新下载所有包
+      如果先用npm下载，在用yarn。 没问题
+
  */
+
+const math = require('math');
+
+console.log(math.add(1, 2));
