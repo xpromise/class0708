@@ -2,3 +2,4 @@
 
 # 忽略.idea文件夹下面的所有内容
 /.idea
+/node_modules
