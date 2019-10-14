@@ -19,7 +19,7 @@ const usersSchema = new mongoose.Schema({
     type: String,
     unique: true, // 唯一的
     required: true // 必须的
-  },
+  }
 });
 
 // 创建Model对象
