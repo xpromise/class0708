@@ -4,7 +4,7 @@ const express = require('express');
   const path = require('path');
   const { resolve } = path;
  */
-const { resolve } = require('path');
+// const { resolve } = require('path');
 // 引入连接数据库
 require('./db');
 // 引入model
@@ -46,23 +46,7 @@ app.use((req, res, next) => {
 
   next();
 });
-
 // 设置路由
-// 处理登录请求的路由
-app.post('/login', async (req, res) => {
-  // 1. 获取用户提交的数据
-  const { username, password } = req.body;
-  // 2. 正则校验
-  // 3. 验证用户名密码是否正确
-  const user = await Users.findOne({username, password});
-  if (user) {
-    // 说明找到了，用户名密码是正确
-    res.send('登录成功');
-  } else {
-    res.send('用户名或密码错误');
-  }
-});
-
 // 处理注册请求的路由
 app.post('/register', async (req, res) => {
   /*
@@ -99,6 +83,20 @@ app.post('/register', async (req, res) => {
   // res.send('注册成功');
   // res.sendFile(resolve(__dirname, 'public/login.html')); // 网址没变
   res.redirect('http://localhost:3000/login.html');
+});
+// 处理登录请求的路由
+app.post('/login', async (req, res) => {
+  // 1. 获取用户提交的数据
+  const { username, password } = req.body;
+  // 2. 正则校验
+  // 3. 验证用户名密码是否正确
+  const user = await Users.findOne({username, password});
+  if (user) {
+    // 说明找到了，用户名密码是正确
+    res.send('登录成功');
+  } else {
+    res.send('用户名或密码错误');
+  }
 });
 
 // 监听端口号
