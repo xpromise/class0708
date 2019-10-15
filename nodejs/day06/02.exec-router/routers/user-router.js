@@ -87,5 +87,11 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.use((err, req, res, next) => {
+  // 统一处理错误
+  console.log(err);
+  res.status(500).send('服务器出错了~请稍后再试');
+});
+
 // 暴露router
 module.exports = router;
