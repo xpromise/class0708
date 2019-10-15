@@ -8,7 +8,7 @@ const router = new express.Router();
 // 设置路由、中间件
 // 应用级中间件: 提取公共代码
 router.use((req, res, next) => {
-  const { username, password, rePassword, email } = req.body;
+  const {username, password, rePassword, email} = req.body;
 
   console.log(req.url); // /register  /login
 
@@ -21,7 +21,7 @@ router.use((req, res, next) => {
   const passwordReg = /^[A-Za-z0-9_]{5,15}$/; // 密码只能包含英文、数字、下划线，长度为5-15位
   const emailReg = /^[A-Za-z0-9_]{3,10}@[A-Za-z0-9_]{2,5}\.(com|cn)$/; // xxx@xxx.com
 
-  const errMsg = { username, email };
+  const errMsg = {username, email};
 
   if (!usernameReg.test(username)) {
     // 用户名校验失败
@@ -42,7 +42,7 @@ router.use((req, res, next) => {
 
   if (errMsg.usernameErr || errMsg.passwordErr || errMsg.emailErr || errMsg.rePasswordErr) {
     console.log(errMsg);
-    res.render(assetName, { errMsg });
+    res.render(assetName, {errMsg});
     return;
   }
 
@@ -59,14 +59,14 @@ router.post('/register', async (req, res) => {
     5. 注册成功
    */
   // 1. 获取用户提交数据  req.query
-  const { username, password, email } = req.body;
+  const {username, password, email} = req.body;
   // 2. 正则校验
   // 定义正则规则
   // 3. 验证用户名是否已存在  Model.findOne({username: username})
   const result = await Users.findOne({username});
   if (result) {
     // 用户名已存在
-    res.render('register.ejs', { errMsg: { usernameErr: '用户名已存在', username, email } });
+    res.render('register.ejs', {errMsg: {usernameErr: '用户名已存在', username, email}});
     return;
   }
   // 4. 将用户数据保存在数据库中
@@ -84,7 +84,7 @@ router.post('/register', async (req, res) => {
 // 处理登录请求的路由
 router.post('/login', async (req, res) => {
   // 1. 获取用户提交的数据
-  const { username, password } = req.body;
+  const {username, password} = req.body;
   // 2. 正则校验
   // 3. 验证用户名密码是否正确
   const user = await Users.findOne({username, password});
@@ -92,7 +92,7 @@ router.post('/login', async (req, res) => {
     // 说明找到了，用户名密码是正确
     res.send('登录成功');
   } else {
-    res.render('login', { errMsg: { usernameErr: '用户名或密码错误', username} });
+    res.render('login', {errMsg: {usernameErr: '用户名或密码错误', username}});
   }
 });
 
