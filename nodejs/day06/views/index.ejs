@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>test</title>
+</head>
+<body>
+<!--
+  模板资源使用ejs渲染的数据：  res.render('xx', {name: xx, age: xx})
+  模板资源就会多一个模板资源全局变量  name age  person
+  语法：
+    < %  % > : 在里面能执行任意js代码，但是没有任何输出
+
+    < %=  % > : 有输出: 输出转义后的代码 -- 推荐使用
+      不能相信用户的任何输入：都得转义处理
+    < %-  % > : 有输出：输出未转义的代码
+-->
+<% person.forEach(function (item) { %>
+  <p>姓名：<%= item.name %></p>
+  <p>年龄：<%= item.age %></p>
+<% }) %>
+
+<% if (false) { %>
+  <h1>hello</h1>
+<% } %>
+</body>
+</html>
