@@ -81,7 +81,6 @@ module.exports = class Application extends Emitter {
    用来创建ctx对象
    req/res nodejs原生对象
    request/response koa自己封装的对象
-
    */
   createContext(req, res) {
     const context = Object.create(this.context);
