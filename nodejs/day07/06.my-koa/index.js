@@ -3,19 +3,19 @@ const Koa = require('./application');
 const app = new Koa();
 
 // 设置中间件
-app.use((req, res, next) => {
+app.use((context, next) => {
   console.log(111);
   // 返回响应
   next();
   // next(); // 报错
 });
 
-app.use((req, res, next) => {
+app.use((context, next) => {
   console.log(222);
 
   next();
   // 返回响应
-  res.end('hello my koa');
+  context.res.body = 'hello my koa';
 });
 
 app.listen(3000, (err) => {

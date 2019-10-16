@@ -5,47 +5,63 @@ module.exports = class Application {
     // 中间件数组
     this.middleware = [];
   }
-
   // 使用中间件
   use(fn) {
     // 将所有中间件函数添加到一个数组中
     this.middleware.push(fn);
     return this;
   }
-
   // 监听端口号
   listen(...args) {
     const server = http.createServer(this.callback());
     server.listen(...args);
   }
-
+  // 做一些准备
   callback() {
-    const handleRequest = (req, res) => {
-      // 处理请求回调函数
-      // 执行中间件函数
-      this.handleRequest(req, res);
-    };
-    return handleRequest;
-  }
-
-  // 处理请求函数
-  handleRequest(req, res) {
     // 整合中间件
     const fn = compose(this.middleware);
 
-    fn(req, res).then(() => {
-      // 统一返回成功响应
+    const handleRequest = (req, res) => {
+      // 处理请求回调函数
+      const context = this.createContext(req, res);
+      // 执行中间件函数
+      this.handleRequest(context, fn);
+    };
 
-    }).catch(() => {
-      res.statusCode = 500;
-      res.end();
-    });
+    return handleRequest;
   }
+  // 创建context
+  createContext(req, res) {
+    const context = {};
+    context.req = req;
+    context.res = res;
+    return context;
+  }
+  // 处理请求函数: 执行中间件函数
+  handleRequest(context, fn) {
 
+    const handleResponse = () => {
+      // 统一返回成功响应
+      respond(context);
+    };
+
+    const error = () => {
+      // 返回失败错误
+      context.res.statusCode = 500;
+      context.res.end();
+    };
+
+    fn(context).then(handleResponse).catch(error);
+  }
 };
 
+// 处理响应
+function respond(context) {
+  context.res.end(context.res.body);
+}
+
 function compose(middleware) {
-  return function (req, res) {
+  return function (context) {
     let index = -1;
     // 默认调用一次，为了触发第一个中间件函数
     return dispatch(0);
@@ -57,7 +73,7 @@ function compose(middleware) {
       if (!fn) return Promise.resolve();
 
       try {
-        return Promise.resolve(fn(req, res, dispatch.bind(null, i + 1)));
+        return Promise.resolve(fn(context, dispatch.bind(null, i + 1)));
       } catch (e) {
         return Promise.reject(e);
       }
@@ -65,14 +81,17 @@ function compose(middleware) {
   }
 }
 
-
+/*
+  [(req, res, next) => {}, () => {}]
+ */
 /*function compose(middleware) {
   return function (req, res) {
     // 默认调用一次，为了触发第一个中间件函数
     return dispatch(0);
+
     function dispatch(i) {
       const fn = middleware[i];
-      return fn(req, res, dispatch.bind(null, i + 1));
+      fn(req, res, dispatch.bind(null, i + 1));
     }
   }
 }*/
