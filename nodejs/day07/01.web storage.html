@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>web storage</title>
+</head>
+<body>
+<script type="text/javascript">
+
+  const person = {name: 'jack', age: 18};
+
+  /*
+    localStorage 永久储存
+    sessionStorage 会话存储
+   */
+
+  // localStorage.setItem('a', JSON.stringify(person));
+  // localStorage.setItem('b', 123);
+  // localStorage.setItem('c', JSON.stringify(person));
+  // console.log(JSON.parse(localStorage.getItem('a')));
+  // 删除一个
+  // localStorage.removeItem('user');
+  // 清除所有
+  // localStorage.clear();
+  sessionStorage.setItem('user', 456);
+
+  // console.log(sessionStorage.getItem('user'));
+
+</script>
+</body>
+</html>

@@ -18,6 +18,8 @@
     console.log('--------');
     console.log(error);
     console.log('--------');
+  } finally {
+
   }
 
 })();

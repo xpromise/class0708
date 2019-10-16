@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<script type="text/javascript">
+  /*
+    跨页面通讯：
+      1. cookie
+        A页面给B页面发送数据
+          A页面：document.cookie = 'key=value'
+          B页面： document.cookie
+          缺点：没办法实时获取通讯的数据
+      2. localStorage
+         优点：能够实时发送的数据
+   */
+
+  window.onstorage = function (event) {
+    console.log(event);
+    const { key, newValue } = event;
+    console.log(newValue);
+  }
+
+</script>
+</body>
+</html>
