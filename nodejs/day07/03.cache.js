@@ -21,8 +21,27 @@ const app = express();
         if-none-match 文件唯一标识
         if-modified-since 文件最近一次修改时间
 
+      流程：
+        第一次浏览器访问服务器资源： 服务器设置响应头并返回资源给浏览器
+          etag xxx
+          last-modified xxx
+        浏览器接受到服务器返回的响应头，就会存储起来。
+        第二次浏览器访问服务器资源，自动携带上之前存的响应头，作为请求头发送过去（会改名字）
+          etag --> if-none-math
+          last-modified --> if-modified-since
+        服务器
+          判断服务器保存的etag和浏览器发送过来if-none-math的值是否相等
+          判断服务器保存的last-modified和浏览器发送过来if-modified-since的值是否相等
+          如果都相等，走协商缓存  304
+          如果有一个不相等，说明资源发生过变化，返回新资源
+
       特点：一定会访问服务器（一定发送请求），由服务器决定是否走缓存
+
+      当强制缓存和协商缓存都存在：
+        先看强制缓存。命中了，就直接读取缓存
+        如果强制缓存失效（过期了），看协商缓存
  */
+
 
 app.get('/', (req, res) => {
   // 访问当前路由，返回index.html
@@ -44,7 +63,7 @@ app.get('/js/index.js', (req, res) => {
   const filePath = resolve(__dirname, 'public/js/index.js');
   readFile(filePath, (err, data) => {
     if (!err) {
-      // 设置强制缓存
+      // 设置强制缓存  设置响应头
       res.set('cache-control', 'max-age=20');
       // res.set('expires', new Date(Date.now() + 10000).toGMTString());
       // 返回响应
@@ -60,8 +79,10 @@ let etagName = '';
 let lastModified = 0;
 
 const filePath = resolve(__dirname, 'public/css/index.css');
+
 // 监视文件的变化
 watchFile(filePath, (curr, prev) => {
+  // 说明文件发生了变化，修改etagName/lastModified
   etagName = etag(curr);
   lastModified = new Date().toGMTString();
 });
@@ -86,7 +107,7 @@ app.get('/css/index.css', (req, res) => {
     res.status(304).end();
     return
   }
-
+  // 返回新资源
   readFile(filePath, (err, data) => {
     if (!err) {
       // 设置协商缓存
