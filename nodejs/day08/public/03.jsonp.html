@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<button id="btn">按钮</button>
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript">
+
+  $('#btn').click(function () {
+    /*
+      JSONP:
+        跨域：进行同源策略的检查，浏览器的ajax引擎检查的。
+              跨域只有ajax请求可能产生，别的请求script、img、video是不会产生跨域的
+
+        原理：利用script天然可以跨域的特性进行跨域的
+
+        优点：兼容性极好
+        缺点：只能发GET请求
+     */
+    // 1. 创建script标签
+    /*const script = document.createElement('script');
+    // 2. 设置script src属性，设置请求地址?查询字符串。请求方式默认是get
+    script.src = 'http://localhost:3000/ajax?name=jack&callback=fn';
+    // 3. 设置请求成功回调函数
+    window.fn = function (data) {
+      // 响应成功的数据
+      console.log(data);
+    };
+    // 4. 将script标签添加到页面上，才能生效
+    document.body.appendChild(script);*/
+
+    $.getJSON('http://localhost:3000/ajax?callback=?', function (data) {
+      // 响应成功的数据
+      console.log(data);
+    })
+  })
+
+</script>
+</body>
+</html>

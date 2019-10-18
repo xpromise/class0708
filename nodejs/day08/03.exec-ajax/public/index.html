@@ -22,6 +22,8 @@
    */
   $(function () {
     const $province = $('#province');
+    const $city = $('#city');
+    const $county = $('#county');
 
     // 一上来要请求所有省份的数据
     $.get('http://localhost:3000/province', function (result) {
@@ -37,7 +39,7 @@
 
         const htmlStr = result.data.reduce((prev, curr) => {
           const { name, province } = curr;
-          prev += `<option>${name}</option>`;
+          prev += `<option value=${province}>${name}</option>`;
           return prev;
         }, '');
 
@@ -48,6 +50,45 @@
       }
     });
 
+    // 当省份发生变化触发的事件
+    $province.change(function () {
+      // 清空区县的数据
+      $county.html('<option>请选择区(县)</option>');
+      // 获取省份的值
+      const province = this.value;
+      // 发送请求，请求城市数据
+      $.get('http://localhost:3000/city', { province }, function (result) {
+        if (result.code === 0) {
+          const htmlStr = result.data.reduce((prev, curr) => {
+            const { name, city } = curr;
+            prev += `<option value=${city}>${name}</option>`;
+            return prev;
+          }, '<option>请选择城市</option>');
+
+          $city.html(htmlStr);
+        }
+      });
+    });
+
+    // 当城市发生变化触发的事件
+    $city.change(function () {
+      // 获取省份的值
+      const province = $province.val();
+      // 获取城市的值
+      const city = this.value;
+      // 发送请求，请求区县数据
+      $.get('http://localhost:3000/county', { province, city }, function (result) {
+        if (result.code === 0) {
+          const htmlStr = result.data.reduce((prev, curr) => {
+            const { name, county } = curr;
+            prev += `<option value=${county}>${name}</option>`;
+            return prev;
+          }, '<option>请选择区(县)</option>');
+
+          $county.html(htmlStr);
+        }
+      });
+    })
 
   })
 

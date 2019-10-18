@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<button id="btn">按钮</button>
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript">
+
+  /*
+    cors：
+      优点：能支持任意的请求方式
+      缺点：兼容性稍差
+   */
+  $('#btn').click(function () {
+    // 发送ajax请求
+    $.get('http://localhost:3000/cors', {name: 'jack', age: 18}, function (data) {
+      console.log(data);
+    });
+
+  })
+
+</script>
+</body>
+</html>
