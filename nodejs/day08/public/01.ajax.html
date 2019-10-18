@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<button id="btn">按钮</button>
+<script type="text/javascript">
+  document.getElementById('btn').onclick = function () {
+    // 发送ajax请求
+    /*
+      1. 创建xhr实例对象
+      2. 绑定事件监听（监听请求成功/失败）
+        onreadystatechange 当readystate发生变化时触发事件
+          0：初始化状态， 什么都还没做
+          1：代表open调用了，但send方法还未调用（还没有发送请求）
+          2：代表send方法调用了，并且接受到了部分响应信息（接受了响应首行和响应头：响应状态码）
+          3：代表接受了部分响应体数据（如果响应体数据较小就全部接受，但数据如果较大，就只接受一部分）
+          4：代表接受了全部响应体数据
+      3. 设置请求信息
+        请求方式
+        请求地址
+        请求参数
+        xhr.open(请求方式, 请求地址?查询字符串参数, 同步false/异步true);
+      4. 发送请求
+
+      注意：不要通过webstorm服务器启动页面（会产生跨域错误）
+            要通过自己的服务器打开页面
+     */
+
+    // 1. 创建xhr实例对象
+    const xhr = new XMLHttpRequest();
+    // 2. 绑定事件监听（监听请求成功/失败）
+    xhr.onreadystatechange = function () {
+      console.log('事件触发了', xhr.readyState);
+      /*if (xhr.readyState === 2) {
+        // 响应状态码
+        console.log(xhr.status);
+      }
+      if (xhr.readyState === 3) {
+        // 响应内容
+        console.log(xhr.responseText);
+      }
+      if (xhr.readyState === 4) {
+        // 响应内容
+        console.log(xhr.responseText);
+      }*/
+      if (xhr.readyState === 4 && (xhr.status > 199 || xhr.status < 300)) {
+        // 响应内容
+        console.log(xhr.responseText);
+      }
+    };
+    // 3. 设置请求信息
+    xhr.open('GET', 'http://localhost:3000/ajax?name=jack&age=18');
+    // 4. 发送请求
+    xhr.send();
+
+    console.log('全部代码执行完了~');
+  }
+</script>
+</body>
+</html>
