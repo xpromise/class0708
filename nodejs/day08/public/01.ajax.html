@@ -28,7 +28,6 @@
       注意：不要通过webstorm服务器启动页面（会产生跨域错误）
             要通过自己的服务器打开页面
      */
-
     // 1. 创建xhr实例对象
     const xhr = new XMLHttpRequest();
     // 2. 绑定事件监听（监听请求成功/失败）
@@ -46,15 +45,33 @@
         // 响应内容
         console.log(xhr.responseText);
       }*/
-      if (xhr.readyState === 4 && (xhr.status > 199 || xhr.status < 300)) {
-        // 响应内容
-        console.log(xhr.responseText);
+      if (xhr.readyState === 4) {
+        if (xhr.status > 199 && xhr.status < 300) {
+          // 成功响应内容
+          console.log(xhr.responseText);
+        } else if (xhr.status > 399 && xhr.status < 600) {
+          // 失败的响应
+          console.log(xhr.responseText);
+        }
       }
     };
     // 3. 设置请求信息
-    xhr.open('GET', 'http://localhost:3000/ajax?name=jack&age=18');
+    /*
+      get请求默认会缓存起来（第二次发送请求会走缓存）
+        chrome/firefox （相当于走协商缓存，需要访问服务器）
+        ie （相当于走强制缓存，不需要服务器）
+        问题：如果后台资源更新了，ie获取不到最新的内容
+        解决：请求参数加上随意数，每次请求都不一样，就不会走缓存
+     */
+    // xhr.open('GET', 'http://localhost:3000/ajax?name=jack&age=20&date=' + Date.now());
+    // xhr.open('GET', 'http://localhost:3000/ajax?name=jack&age=20&date=' + Math.random());
+    xhr.open('POST', 'http://localhost:3000/ajax');
+    // 设置请求头
+    // xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
+    xhr.setRequestHeader('content-type', 'application/json');
     // 4. 发送请求
-    xhr.send();
+    // xhr.send('name=jack&age=20'); // urlencoded编码 - form
+    xhr.send(JSON.stringify({name: 'jack', age: 20})); // json
 
     console.log('全部代码执行完了~');
   }

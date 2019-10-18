@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<button id="btn">按钮</button>
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript">
+
+  $('#btn').click(function () {
+    // 发送ajax请求
+    /*$.ajax({
+      method: 'GET',  // 请求方式
+      url: 'http://localhost:3000/ajax', // 请求地址
+      data: { // 请求参数
+        name: 'jack',
+        age: 18
+      },
+      success: function (data) {
+        console.log(data); // 请求成功的响应数据
+      },
+      error: function (error) {
+        console.log(error); // 请求失败的具体原因
+      }
+    })*/
+
+    /*$.ajax({
+      method: 'POST',  // 请求方式
+      url: 'http://localhost:3000/ajax', // 请求地址
+      data: JSON.stringify({ // 请求参数
+        name: 'jack',
+        age: 18
+      }),
+      headers: { // 请求头： 默认post请求是以form表单方式发送
+        'content-type': 'application/json'
+      },
+      success: function (data) {
+        console.log(data); // 请求成功的响应数据
+      },
+      error: function (error) {
+        console.log(error); // 请求失败的具体原因
+      }
+    })*/
+
+    $.get('http://localhost:3000/ajax', {name: 'jack', age: 18}, function (data) {
+      console.log(data);
+    });
+
+    $.post('http://localhost:3000/ajax', {name: 'jack', age: 18}, {'content-type': 'application/x-www-form-urlencoded'}, function (data) {
+      console.log(data);
+    });
+
+  })
+
+</script>
+</body>
+</html>
