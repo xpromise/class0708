@@ -44,11 +44,11 @@
       }
     })*/
 
-    $.get('http://localhost:3000/ajax', {name: 'jack', age: 18}, function (data) {
+    /*$.get('http://localhost:3000/ajax', {name: 'jack', age: 18}, function (data) {
       console.log(data);
-    });
+    });*/
 
-    $.post('http://localhost:3000/ajax', {name: 'jack', age: 18}, {'content-type': 'application/x-www-form-urlencoded'}, function (data) {
+    $.post('http://localhost:3000/ajax', {name: 'jack', age: 18}, function (data) {
       console.log(data);
     });
 
