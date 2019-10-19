@@ -2,7 +2,14 @@
   width: 100px;
   height: 100px;
   background-color: pink;
+  animation: move 2s linear infinite;
+  background-size: cover;
   p{
     font-size: 20px;
   }
+}
+
+@keyframes move {
+  0%{}
+  100%{transform: translateX(200px)}
 }

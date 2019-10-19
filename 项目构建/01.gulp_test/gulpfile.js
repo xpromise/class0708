@@ -23,6 +23,9 @@ const concat = require('gulp-concat');
 const connect = require('gulp-connect');
 const livereload = require('gulp-livereload');
 const open = require('open');
+const uglify = require('gulp-uglify');
+const cleanCSS = require('gulp-clean-css');
+const htmlmin = require('gulp-htmlmin');
 
 // 配置插件任务
 gulp.task('babel', () => {
@@ -41,6 +44,13 @@ gulp.task('browserify', function() {
     .pipe(livereload());
 });
 
+gulp.task('uglify', function() {
+  return gulp.src('build/js/built.js')
+    .pipe(uglify()) // 压缩js
+    .pipe(rename('built.min.js'))
+    .pipe(gulp.dest('./build/js'))
+});
+
 gulp.task('less', function () {
   return gulp.src('src/less/*.less')
     .pipe(less()) // 将less编译成css
@@ -49,10 +59,33 @@ gulp.task('less', function () {
     .pipe(livereload());
 });
 
+gulp.task('cleanCss', function () {
+  return gulp.src('build/css/built.css')
+    .pipe(cleanCSS())
+    .pipe(rename('built.min.css'))
+    .pipe(gulp.dest('build/css'));
+});
+
 gulp.task('html', function () {
   return gulp.src('src/index.html')
     .pipe(gulp.dest('build'))
     .pipe(livereload());
+});
+
+gulp.task('htmlMin', () => {
+  return gulp.src('src/index.html')
+    .pipe(htmlmin({
+      collapseWhitespace: true, // 去除空格
+      removeComments: true // 移除注释
+    }))
+    .pipe(gulp.dest('build'));
+});
+
+gulp.task('cleanCss', function () {
+  return gulp.src('build/css/built.css')
+    .pipe(cleanCSS())
+    .pipe(rename('built.min.css'))
+    .pipe(gulp.dest('build/css'));
 });
 
 gulp.task('watch', function () {
@@ -83,5 +116,11 @@ gulp.task('js', gulp.series(['babel', 'browserify'])); // 同步：顺序执行
 
 gulp.task('js-dev', gulp.parallel(['js', 'less', 'html'])); // 异步：并行执行
 
-gulp.task('default', gulp.series(['js-dev', 'watch']));
 
+gulp.task('js-prod', gulp.series(['babel', 'browserify', 'uglify']));
+gulp.task('css-prod', gulp.series(['less', 'cleanCss']));
+
+// 开发环境 --> npm start --> gulp dev
+gulp.task('dev', gulp.series(['js-dev', 'watch']));
+// 生产环境 --> npm run build --> gulp prod
+gulp.task('prod', gulp.parallel(['js-prod', 'css-prod', 'htmlMin']));

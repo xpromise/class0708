@@ -1,0 +1,13 @@
+{
+  "name": "01.gulp_test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "gulpfile.js",
+  "scripts": {
+    "start": "gulp dev",
+    "build": "gulp prod"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
