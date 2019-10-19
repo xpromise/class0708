@@ -21,6 +21,8 @@ const rename = require('gulp-rename');
 const less = require('gulp-less');
 const concat = require('gulp-concat');
 const connect = require('gulp-connect');
+const livereload = require('gulp-livereload');
+const open = require('open');
 
 // 配置插件任务
 gulp.task('babel', () => {
@@ -28,6 +30,7 @@ gulp.task('babel', () => {
   return gulp.src('src/js/*.js')   // 将指定文件以nodejs流的方式读取
     .pipe(babel({presets: ['@babel/preset-env']})) // 使用babel插件将导入的文件进行语法装换（将ES6模块化语法装换成commonjs模块化语法, 将ES6其他语法装换成ES5一下的低级语法）
     .pipe(gulp.dest('build/js')) // 将流中文件输出/写入到另外文件夹里面去
+    .pipe(livereload());
 });
 
 gulp.task('browserify', function() {
@@ -35,18 +38,21 @@ gulp.task('browserify', function() {
     .pipe(browserify()) // 将commonjs模块化装换浏览器能识别的js语法
     .pipe(rename('built.js')) // 重命名
     .pipe(gulp.dest('./build/js'))
+    .pipe(livereload());
 });
 
 gulp.task('less', function () {
   return gulp.src('src/less/*.less')
     .pipe(less()) // 将less编译成css
     .pipe(concat('built.css')) // 合并文件
-    .pipe(gulp.dest('build/css'));
+    .pipe(gulp.dest('build/css'))
+    .pipe(livereload());
 });
 
 gulp.task('html', function () {
   return gulp.src('src/index.html')
     .pipe(gulp.dest('build'))
+    .pipe(livereload());
 });
 
 gulp.task('watch', function () {
@@ -54,8 +60,15 @@ gulp.task('watch', function () {
   // 开启服务器
   connect.server({
     port: 3000,
-    root: ['build']
+    root: ['build'],
+    livereload: true
   });
+
+  // 热更新
+  livereload.listen();
+
+  // 自动打开浏览器
+  open('http://localhost:3000');
 
   // 自动编译： 当修改了源代码自动运行任务编译到build中
   // 监视 src/js/*.js 文件，一旦文件发生变化，就会执行后面的任务
@@ -70,5 +83,5 @@ gulp.task('js', gulp.series(['babel', 'browserify'])); // 同步：顺序执行
 
 gulp.task('js-dev', gulp.parallel(['js', 'less', 'html'])); // 异步：并行执行
 
-gulp.task('default', gulp.series(['js-dev', 'watch'])); // 异步：并行执行
+gulp.task('default', gulp.series(['js-dev', 'watch']));
 
