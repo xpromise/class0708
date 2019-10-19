@@ -54,7 +54,6 @@ app.get('/cors', (req, res) => {
      预检请求跨域缓存
    */
 
-
   res.send('hello cors');
 });
 
