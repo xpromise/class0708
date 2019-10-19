@@ -18,6 +18,9 @@ const gulp = require('gulp');
 const babel = require('gulp-babel');
 const browserify = require('gulp-browserify');
 const rename = require('gulp-rename');
+const less = require('gulp-less');
+const concat = require('gulp-concat');
+const connect = require('gulp-connect');
 
 // 配置插件任务
 gulp.task('babel', () => {
@@ -34,6 +37,38 @@ gulp.task('browserify', function() {
     .pipe(gulp.dest('./build/js'))
 });
 
+gulp.task('less', function () {
+  return gulp.src('src/less/*.less')
+    .pipe(less()) // 将less编译成css
+    .pipe(concat('built.css')) // 合并文件
+    .pipe(gulp.dest('build/css'));
+});
+
+gulp.task('html', function () {
+  return gulp.src('src/index.html')
+    .pipe(gulp.dest('build'))
+});
+
+gulp.task('watch', function () {
+
+  // 开启服务器
+  connect.server({
+    port: 3000,
+    root: ['build']
+  });
+
+  // 自动编译： 当修改了源代码自动运行任务编译到build中
+  // 监视 src/js/*.js 文件，一旦文件发生变化，就会执行后面的任务
+  gulp.watch('src/js/*.js', gulp.series(['js']));
+  gulp.watch('src/less/*.less', gulp.series(['less']));
+  gulp.watch('src/index.html', gulp.series(['html']));
+
+});
+
 // 配置默认任务， 实际执行的任务是babel和browserify
-gulp.task('default', gulp.series(['babel', 'browserify'])); // 同步：顺序执行
-// gulp.task('default', gulp.parallel(['babel', 'browserify'])); // 异步：并行执行
+gulp.task('js', gulp.series(['babel', 'browserify'])); // 同步：顺序执行
+
+gulp.task('js-dev', gulp.parallel(['js', 'less', 'html'])); // 异步：并行执行
+
+gulp.task('default', gulp.series(['js-dev', 'watch'])); // 异步：并行执行
+
