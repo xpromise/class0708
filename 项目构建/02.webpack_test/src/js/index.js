@@ -12,7 +12,7 @@ import '../less/test1.less';
 import '../less/test2.less';
 
 console.log(data);
-console.log(add(6, 3));
+console.log(add(3, 3)());
 const p = new Person('jack', 18);
 console.log(p);
 

@@ -72,7 +72,19 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/index.html', // 以./src/index.html为模板创建新的html文件（1. 结构和模板文件一样 2. 自动引入js/css）
     }),
-    new AddAssetHtmlPlugin({ filepath: require.resolve('./src/js/iconfont.js') }), // 能给HtmlWebpackPlugin生成的html文件添加资源（js/css）
+    new AddAssetHtmlPlugin({ // 能给HtmlWebpackPlugin生成的html文件添加资源（js/css）
+      filepath: require.resolve('./src/js/iconfont.js'),
+      outputPath: 'js', // 决定文件输出路径
+      publicPath: 'js', // 决定script.src的文件路径
+    }),
   ],
-  mode: 'development'
+  mode: 'development',
+  // npm i webpack-dev-server -D
+  devServer: { // 开启一个服务器来运行构建后的代码
+    contentBase: resolve(__dirname, "build"), // 运行代码的路径
+    compress: true, // 启动gzip压缩。
+    port: 3000, // 端口号
+    open: true, // 自动打开浏览器
+  },
+  devtool: 'cheap-module-eval-source-map', // 追踪源代码错误
 };
