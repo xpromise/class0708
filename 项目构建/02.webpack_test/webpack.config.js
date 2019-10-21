@@ -8,7 +8,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
 
 module.exports = {
-  entry: './src/js/index.js',
+  entry: ['./src/js/index.js', './src/index.html'],
   output: {
     filename: './js/built.js',
     path: resolve(__dirname, 'build')
@@ -82,9 +82,10 @@ module.exports = {
   // npm i webpack-dev-server -D
   devServer: { // 开启一个服务器来运行构建后的代码
     contentBase: resolve(__dirname, "build"), // 运行代码的路径
-    compress: true, // 启动gzip压缩。
+    compress: true, // 启动gzip压缩
     port: 3000, // 端口号
     open: true, // 自动打开浏览器
+    hot: true, // 开启模块热替换功能
   },
   devtool: 'cheap-module-eval-source-map', // 追踪源代码错误
 };
