@@ -4,6 +4,10 @@ import data from '../json/data';
 
 // 引入样式: 为了webpack能够打包样式资源
 import '../css/test1.css';
+import '../css/test2.css';
+
+import '../less/test1.less';
+import '../less/test2.less';
 
 console.log(data);
 console.log(add(6, 3));
