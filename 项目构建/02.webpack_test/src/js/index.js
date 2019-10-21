@@ -14,6 +14,8 @@ console.log(add(6, 3));
 const p = new Person('jack', 18);
 console.log(p);
 
+console.log(1 === '1');
+
 /*
   下载包：
     npm i webpack webpack-cli -g

@@ -46,7 +46,15 @@ module.exports = {
           loader: 'html-loader'
         }*/
         loader: 'html-loader' // 解决html中img问题
-      }
+      },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/, // 排除node_modules
+        loader: 'eslint-loader',
+        options: {
+          fix: true, // 自动修复， 一旦出现了eslint报错，自动修复
+        },
+      },
     ]
   },
   plugins: [ // 插件配置
