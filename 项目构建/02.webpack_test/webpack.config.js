@@ -3,6 +3,8 @@
  */
 
 const { resolve } = require('path');
+// 插件必须引入才能使用
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: './src/js/index.js',
@@ -29,21 +31,28 @@ module.exports = {
       },
       {
         test: /\.(png|jpg|gif)$/,
-        use: [
-          {
-            loader: 'url-loader', // url-loader是基于file-loader使用
-            options: {
-              limit: 8192, // 8 * 1024 = 8 kb   8kb以下的图片会被base64处理
-              outputPath: 'images', // 决定图片的输出路径 （output.path + outputPath）
-              name: '[hash:10].[ext]', // 名称  hash:10 取前面10位hash值  ext 自动补全文件扩展名（文件之前是怎么样的扩展名，之后就是怎么样的）
-            }
+        use: {
+          loader: 'url-loader', // url-loader是基于file-loader使用
+          options: {
+            limit: 8192, // 8 * 1024 = 8 kb   8kb以下的图片会被base64处理
+            outputPath: 'images', // 决定图片的输出路径 （output.path + outputPath）
+            name: '[hash:10].[ext]', // 名称  hash:10 取前面10位hash值  ext 自动补全文件扩展名（文件之前是怎么样的扩展名，之后就是怎么样的）
           }
-        ]
+        }
+      },
+      {
+        test: /\.html$/,
+        /*use: {
+          loader: 'html-loader'
+        }*/
+        loader: 'html-loader' // 解决html中img问题
       }
     ]
   },
   plugins: [ // 插件配置
-
+    new HtmlWebpackPlugin({
+      template: './src/index.html', // 以./src/index.html为模板创建新的html文件（1. 结构和模板文件一样 2. 自动引入js/css）
+    }),
   ],
   mode: 'development'
 };
