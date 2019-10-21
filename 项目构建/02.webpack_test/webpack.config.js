@@ -5,6 +5,7 @@
 const { resolve } = require('path');
 // 插件必须引入才能使用
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
 
 module.exports = {
   entry: './src/js/index.js',
@@ -48,6 +49,8 @@ module.exports = {
         loader: 'html-loader' // 解决html中img问题
       },
       {
+        // npm i eslint eslint-loader -D
+        // npx install-peerdeps --dev eslint-config-airbnb-base
         test: /\.js$/,
         exclude: /node_modules/, // 排除node_modules
         loader: 'eslint-loader',
@@ -55,12 +58,21 @@ module.exports = {
           fix: true, // 自动修复， 一旦出现了eslint报错，自动修复
         },
       },
+      {
+        test: /\.(eot|svg|ttf|woff)$/,
+        loader: 'file-loader', // 将文件原封不动输出出去
+        options: {
+          name: '[hash:10].[ext]',
+          outputPath: 'media'
+        }
+      }
     ]
   },
   plugins: [ // 插件配置
     new HtmlWebpackPlugin({
       template: './src/index.html', // 以./src/index.html为模板创建新的html文件（1. 结构和模板文件一样 2. 自动引入js/css）
     }),
+    new AddAssetHtmlPlugin({ filepath: require.resolve('./src/js/iconfont.js') }), // 能给HtmlWebpackPlugin生成的html文件添加资源（js/css）
   ],
   mode: 'development'
 };

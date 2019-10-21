@@ -1,10 +1,12 @@
 import add from './module1';
 import Person from './module2';
 import data from '../json/data';
+// 引入iconfont.js
 
 // 引入样式: 为了webpack能够打包样式资源
 import '../css/test1.css';
 import '../css/test2.css';
+import '../css/iconfont.css';
 
 import '../less/test1.less';
 import '../less/test2.less';
