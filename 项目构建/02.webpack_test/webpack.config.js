@@ -88,4 +88,18 @@ module.exports = {
     hot: true, // 开启模块热替换功能
   },
   devtool: 'cheap-module-eval-source-map', // 追踪源代码错误
+  resolve: {
+    alias: { // 配置路径别名
+      $css: resolve(__dirname, 'src/css'),
+      $less: resolve(__dirname, 'src/less'),
+    },
+    extensions: [".js", ".json", ".less"] // 自动解析文件扩展名
+  },
+  // targets: 'web',
+  externals: {
+    jquery: 'jQuery' // 外部文件，从而不会被webpack打包
+  },
+  performance: {
+    hints: false // 不提示性能问题
+  }
 };

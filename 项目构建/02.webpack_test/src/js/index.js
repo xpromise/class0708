@@ -1,16 +1,17 @@
 import add from './module1';
 import Person from './module2';
 import data from '../json/data';
-// 引入iconfont.js
+import $ from 'jquery';
 
 // 引入样式: 为了webpack能够打包样式资源
-import '../css/test1.css';
-import '../css/test2.css';
-import '../css/iconfont.css';
+import '$css/test1.css';
+import '$css/test2.css';
+import '$css/iconfont.css';
 
-import '../less/test1.less';
-import '../less/test2.less';
+import '$less/test1';
+import '$less/test2';
 
+console.log($);
 console.log(data);
 console.log(add(3, 3));
 const p = new Person('jack', 18);
@@ -19,7 +20,7 @@ console.log(p);
 console.log(1 === '1');
 
 if (module.hot) {
-  module.hot.accept('./module1', function () {
+  module.hot.accept('./module1', function hot() {
   });
 }
 
