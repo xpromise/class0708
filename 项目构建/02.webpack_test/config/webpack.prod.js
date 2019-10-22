@@ -83,10 +83,36 @@ module.exports = {
         // npx install-peerdeps --dev eslint-config-airbnb-base
         test: /\.js$/,
         exclude: /node_modules/, // 排除node_modules
+        enforce: 'pre', // 提前执行
         loader: 'eslint-loader',
         options: {
           fix: true, // 自动修复， 一旦出现了eslint报错，自动修复
         },
+      },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              [
+                '@babel/preset-env',
+                {
+                  // js兼容性按需加载： 根据你使用js语法来自动加载兼容性的包
+                  useBuiltIns: "usage",
+                  corejs: { version: 3, proposals: true },
+                  targets: { // 指定兼容性做到哪个版本浏览器
+                    ie: 9,
+                    chrome: 59,
+                    edge: 13,
+                    firefox: 50,
+                  }
+                }
+              ]
+            ]
+          }
+        }
       },
       {
         test: /\.(eot|svg|ttf|woff)$/,

@@ -1,29 +1,27 @@
 import add from './module1';
 import Person from './module2';
 import data from '../json/data';
-import $ from 'jquery';
+import $ from 'jquery'; // 引入样式: 为了webpack能够打包样式资源
 
-// 引入样式: 为了webpack能够打包样式资源
 import '$css/test1.css';
 import '$css/test2.css';
 import '$css/iconfont.css';
-
 import '$less/test1';
 import '$less/test2';
-
 console.log($);
 console.log(data);
 console.log(add(3, 3));
 const p = new Person('jack', 18);
 console.log(p);
-
 console.log(1 === '1');
+const promise = new Promise(function pro(resolve) {
+  return setTimeout(resolve, 1000);
+});
+console.log(promise);
 
 if (module.hot) {
-  module.hot.accept('./module1', function hot() {
-  });
+  module.hot.accept('./module1', function hot() {});
 }
-
 /*
   下载包：
     npm i webpack webpack-cli -g
