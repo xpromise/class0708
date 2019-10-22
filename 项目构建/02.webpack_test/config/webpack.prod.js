@@ -1,31 +1,37 @@
 /*
   webpack.config.js就是webpack的配置文件：当你运行webpack指令时，会读取配置文件中的配置运行
+
+  npm i serve -g 下载全局包
+  serve -s build -p 3000 开启服务器部署build目录下的资源
+    就能通过 http://localhost:3000
  */
 
 const { resolve } = require('path');
 // 插件必须引入才能使用
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-  entry: ['./src/js/index.js', './src/index.html'],
+  entry: './src/js/index.js',
   output: {
-    filename: './js/built.js',
-    path: resolve(__dirname, 'build')
+    filename: 'js/built.js',
+    path: resolve(__dirname, '../build'),
+    publicPath: '/' // 所有资源src路径前面都会加上 /
   },
   module: {
     rules: [ // loader配置
       {
         test: /\.css$/, // 检测文件是否是css文件
         use: [  // 执行顺序：从下到上，从右往左依次执行
-          'style-loader', // 创建style标签，将js中的css代码放进标签内生效
+          MiniCssExtractPlugin.loader, // 提取js中的css成单独文件
           'css-loader', // 能将css文件打包到js中（会以commonjs方式整合到js文件中）
         ]
       },
       {
         test: /\.less$/,
         use: [
-          'style-loader', // 创建style标签，将js中的css代码放进标签内生效
+          MiniCssExtractPlugin.loader,
           'css-loader', // 能将css文件打包到js中（会以commonjs方式整合到js文件中）
           'less-loader' // 将less编译成css文件
         ]
@@ -38,6 +44,7 @@ module.exports = {
             limit: 8192, // 8 * 1024 = 8 kb   8kb以下的图片会被base64处理
             outputPath: 'images', // 决定图片的输出路径 （output.path + outputPath）
             name: '[hash:10].[ext]', // 名称  hash:10 取前面10位hash值  ext 自动补全文件扩展名（文件之前是怎么样的扩展名，之后就是怎么样的）
+            publicPath: '/images'
           }
         }
       },
@@ -73,25 +80,24 @@ module.exports = {
       template: './src/index.html', // 以./src/index.html为模板创建新的html文件（1. 结构和模板文件一样 2. 自动引入js/css）
     }),
     new AddAssetHtmlPlugin({ // 能给HtmlWebpackPlugin生成的html文件添加资源（js/css）
-      filepath: require.resolve('./src/js/iconfont.js'),
+      filepath: require.resolve('../src/js/iconfont.js'),
       outputPath: 'js', // 决定文件输出路径
-      publicPath: 'js', // 决定script.src的文件路径
+      publicPath: '/js', // 决定script.src的文件路径
+    }),
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // all options are optional
+      filename: 'css/[name].css',
+      chunkFilename: 'css/[id].css',
+      ignoreOrder: false, // Enable to remove warnings about conflicting order
     }),
   ],
-  mode: 'development',
-  // npm i webpack-dev-server -D
-  devServer: { // 开启一个服务器来运行构建后的代码
-    contentBase: resolve(__dirname, "build"), // 运行代码的路径
-    compress: true, // 启动gzip压缩
-    port: 3000, // 端口号
-    open: true, // 自动打开浏览器
-    hot: true, // 开启模块热替换功能
-  },
-  devtool: 'cheap-module-eval-source-map', // 追踪源代码错误
+  mode: 'production',
+  devtool: 'cheap-module-source-map', // 追踪源代码错误
   resolve: {
     alias: { // 配置路径别名
-      $css: resolve(__dirname, 'src/css'),
-      $less: resolve(__dirname, 'src/less'),
+      $css: resolve(__dirname, '../src/css'),
+      $less: resolve(__dirname, '../src/less'),
     },
     extensions: [".js", ".json", ".less"] // 自动解析文件扩展名
   },
