@@ -127,6 +127,14 @@ module.exports = {
   plugins: [ // 插件配置
     new HtmlWebpackPlugin({
       template: './src/index.html', // 以./src/index.html为模板创建新的html文件（1. 结构和模板文件一样 2. 自动引入js/css）
+      minify: { // 压缩HTML
+        collapseWhitespace: true, // 去除空格
+        removeComments: true, // 移除注释
+        removeRedundantAttributes: true, // 移除默认值属性
+        removeScriptTypeAttributes: true, // 移除script的type
+        removeStyleLinkTypeAttributes: true, // 移除link/style的type属性
+        useShortDoctype: true // 使用短的doctype
+      }
     }),
     new AddAssetHtmlPlugin({ // 能给HtmlWebpackPlugin生成的html文件添加资源（js/css）
       filepath: require.resolve('../src/js/iconfont.js'),
