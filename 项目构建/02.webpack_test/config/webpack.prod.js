@@ -5,12 +5,13 @@
   serve -s build -p 3000 开启服务器部署build目录下的资源
     就能通过 http://localhost:3000
  */
-
 const { resolve } = require('path');
 // 插件必须引入才能使用
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 module.exports = {
   entry: './src/js/index.js',
@@ -26,6 +27,17 @@ module.exports = {
         use: [  // 执行顺序：从下到上，从右往左依次执行
           MiniCssExtractPlugin.loader, // 提取js中的css成单独文件
           'css-loader', // 能将css文件打包到js中（会以commonjs方式整合到js文件中）
+          {
+            loader: 'postcss-loader',
+            options: {
+              ident: 'postcss',
+              plugins: (loader) => [
+                require('postcss-import')({ root: loader.resourcePath }),
+                require('postcss-preset-env')(),
+                require('cssnano')()
+              ]
+            }
+          }
         ]
       },
       {
@@ -33,6 +45,17 @@ module.exports = {
         use: [
           MiniCssExtractPlugin.loader,
           'css-loader', // 能将css文件打包到js中（会以commonjs方式整合到js文件中）
+          {
+            loader: 'postcss-loader',
+            options: {
+              ident: 'postcss',
+              plugins: (loader) => [
+                require('postcss-import')({ root: loader.resourcePath }),
+                require('postcss-preset-env')(),
+                require('cssnano')()
+              ]
+            }
+          },
           'less-loader' // 将less编译成css文件
         ]
       },
@@ -84,13 +107,28 @@ module.exports = {
       outputPath: 'js', // 决定文件输出路径
       publicPath: '/js', // 决定script.src的文件路径
     }),
-    new MiniCssExtractPlugin({
+    new MiniCssExtractPlugin({ // 提取css成单独文件
       // Options similar to the same options in webpackOptions.output
       // all options are optional
       filename: 'css/[name].css',
       chunkFilename: 'css/[id].css',
       ignoreOrder: false, // Enable to remove warnings about conflicting order
     }),
+    new CleanWebpackPlugin(), // 清除build目录下所有文件
+    new OptimizeCssAssetsPlugin({
+      // assetNameRegExp: /\.optimize\.css$/g,
+      // cssProcessor: require('cssnano'),
+      cssProcessorOptions: {
+        map: { // 解决source-map不生效问题
+          inline: false,
+          annotation: true,
+        }
+      },
+      cssProcessorPluginOptions: {
+        preset: ['default', { discardComments: { removeAll: true } }],
+      },
+      // canPrint: true
+    })
   ],
   mode: 'production',
   devtool: 'cheap-module-source-map', // 追踪源代码错误
