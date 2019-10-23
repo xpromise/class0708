@@ -12,6 +12,7 @@ const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const WorkboxPlugin = require('workbox-webpack-plugin');
 
 module.exports = {
   entry: './src/js/index.js',
@@ -22,62 +23,6 @@ module.exports = {
   },
   module: {
     rules: [ // loader配置
-      {
-        test: /\.css$/, // 检测文件是否是css文件
-        use: [  // 执行顺序：从下到上，从右往左依次执行
-          MiniCssExtractPlugin.loader, // 提取js中的css成单独文件
-          'css-loader', // 能将css文件打包到js中（会以commonjs方式整合到js文件中）
-          {
-            loader: 'postcss-loader',
-            options: {
-              ident: 'postcss',
-              plugins: (loader) => [
-                require('postcss-import')({ root: loader.resourcePath }),
-                require('postcss-preset-env')(),
-                require('cssnano')()
-              ]
-            }
-          }
-        ]
-      },
-      {
-        test: /\.less$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader', // 能将css文件打包到js中（会以commonjs方式整合到js文件中）
-          {
-            loader: 'postcss-loader',
-            options: {
-              ident: 'postcss',
-              plugins: (loader) => [
-                require('postcss-import')({ root: loader.resourcePath }),
-                require('postcss-preset-env')(),
-                require('cssnano')()
-              ]
-            }
-          },
-          'less-loader' // 将less编译成css文件
-        ]
-      },
-      {
-        test: /\.(png|jpg|gif)$/,
-        use: {
-          loader: 'url-loader', // url-loader是基于file-loader使用
-          options: {
-            limit: 8192, // 8 * 1024 = 8 kb   8kb以下的图片会被base64处理
-            outputPath: 'images', // 决定图片的输出路径 （output.path + outputPath）
-            name: '[hash:10].[ext]', // 名称  hash:10 取前面10位hash值  ext 自动补全文件扩展名（文件之前是怎么样的扩展名，之后就是怎么样的）
-            publicPath: '/images'
-          }
-        }
-      },
-      {
-        test: /\.html$/,
-        /*use: {
-          loader: 'html-loader'
-        }*/
-        loader: 'html-loader' // 解决html中img问题
-      },
       {
         // npm i eslint eslint-loader -D
         // npx install-peerdeps --dev eslint-config-airbnb-base
@@ -90,37 +35,101 @@ module.exports = {
         },
       },
       {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: [
-              [
-                '@babel/preset-env',
-                {
-                  // js兼容性按需加载： 根据你使用js语法来自动加载兼容性的包
-                  useBuiltIns: "usage",
-                  corejs: { version: 3, proposals: true },
-                  targets: { // 指定兼容性做到哪个版本浏览器
-                    ie: 9,
-                    chrome: 59,
-                    edge: 13,
-                    firefox: 50,
-                  }
+        oneOf: [  // 以下loader只会执行一个
+          {
+            test: /\.css$/, // 检测文件是否是css文件
+            use: [  // 执行顺序：从下到上，从右往左依次执行
+              MiniCssExtractPlugin.loader, // 提取js中的css成单独文件
+              'css-loader', // 能将css文件打包到js中（会以commonjs方式整合到js文件中）
+              {
+                loader: 'postcss-loader',
+                options: {
+                  ident: 'postcss',
+                  plugins: (loader) => [
+                    require('postcss-import')({ root: loader.resourcePath }),
+                    require('postcss-preset-env')(),
+                    require('cssnano')()
+                  ]
                 }
-              ]
+              }
             ]
+          },
+          {
+            test: /\.less$/,
+            use: [
+              MiniCssExtractPlugin.loader,
+              'css-loader', // 能将css文件打包到js中（会以commonjs方式整合到js文件中）
+              {
+                loader: 'postcss-loader',
+                options: {
+                  ident: 'postcss',
+                  plugins: (loader) => [
+                    require('postcss-import')({ root: loader.resourcePath }),
+                    require('postcss-preset-env')(),
+                    require('cssnano')()
+                  ]
+                }
+              },
+              'less-loader' // 将less编译成css文件
+            ]
+          },
+          {
+            test: /\.(png|jpg|gif)$/,
+            use: {
+              loader: 'url-loader', // url-loader是基于file-loader使用
+              options: {
+                limit: 8192, // 8 * 1024 = 8 kb   8kb以下的图片会被base64处理
+                outputPath: 'images', // 决定图片的输出路径 （output.path + outputPath）
+                name: '[hash:10].[ext]', // 名称  hash:10 取前面10位hash值  ext 自动补全文件扩展名（文件之前是怎么样的扩展名，之后就是怎么样的）
+                publicPath: '/images'
+              }
+            }
+          },
+          {
+            test: /\.html$/,
+            /*use: {
+              loader: 'html-loader'
+            }*/
+            loader: 'html-loader' // 解决html中img问题
+          },
+          {
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: [
+              'thread-loader',
+              {
+                loader: 'babel-loader',
+                options: {
+                  presets: [
+                    [
+                      '@babel/preset-env',
+                      {
+                        // js兼容性按需加载： 根据你使用js语法来自动加载兼容性的包
+                        useBuiltIns: "usage",
+                        corejs: { version: 3, proposals: true },
+                        targets: { // 指定兼容性做到哪个版本浏览器
+                          ie: 9,
+                          chrome: 59,
+                          edge: 13,
+                          firefox: 50,
+                        }
+                      }
+                    ]
+                  ],
+                  cacheDirectory: true  // 缓存babel执行结果
+                }
+              }
+            ]
+          },
+          {
+            test: /\.(eot|svg|ttf|woff)$/,
+            loader: 'file-loader', // 将文件原封不动输出出去
+            options: {
+              name: '[hash:10].[ext]',
+              outputPath: 'media'
+            }
           }
-        }
-      },
-      {
-        test: /\.(eot|svg|ttf|woff)$/,
-        loader: 'file-loader', // 将文件原封不动输出出去
-        options: {
-          name: '[hash:10].[ext]',
-          outputPath: 'media'
-        }
+        ]
       }
     ]
   },
@@ -162,6 +171,12 @@ module.exports = {
         preset: ['default', { discardComments: { removeAll: true } }],
       },
       // canPrint: true
+    }),
+    new WorkboxPlugin.GenerateSW({
+      // 这些选项帮助快速启用 ServiceWorkers
+      // 不允许遗留任何“旧的” ServiceWorkers
+      clientsClaim: true,
+      skipWaiting: true
     })
   ],
   mode: 'production',

@@ -38,3 +38,13 @@ if (module.hot) {
         3. 压缩js代码
     默认webpack只能打包js和json文件，其他文件类型需要引入loader解析
  */
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js').then(registration => {
+      console.log('SW registered: ', registration);
+    }).catch(registrationError => {
+      console.log('SW registration failed: ', registrationError);
+    });
+  });
+}
