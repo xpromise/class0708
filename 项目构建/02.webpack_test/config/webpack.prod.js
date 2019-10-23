@@ -16,7 +16,7 @@ const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 module.exports = {
   entry: './src/js/index.js',
   output: {
-    filename: 'js/built.js',
+    filename: 'js/[contenthash:10].js',
     path: resolve(__dirname, '../build'),
     publicPath: '/' // 所有资源src路径前面都会加上 /
   },
@@ -144,8 +144,8 @@ module.exports = {
     new MiniCssExtractPlugin({ // 提取css成单独文件
       // Options similar to the same options in webpackOptions.output
       // all options are optional
-      filename: 'css/[name].css',
-      chunkFilename: 'css/[id].css',
+      filename: 'css/[contenthash:10].css',
+      chunkFilename: 'css/[contenthash:10].css',
       ignoreOrder: false, // Enable to remove warnings about conflicting order
     }),
     new CleanWebpackPlugin(), // 清除build目录下所有文件
